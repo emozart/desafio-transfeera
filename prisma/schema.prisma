@@ -12,3 +12,15 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Recebedor {
+  id                String @id @default(uuid())
+  nomeRasaoSocial   String @map("nome_rasao_social")
+  email             String
+  cpfCnpj           String @map("cpf_cnpj")
+  tipoChave         String @map("tipo_chave")
+  chave             String
+  status            String
+
+  @@map("recebedores")
+}
