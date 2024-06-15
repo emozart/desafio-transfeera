@@ -10,6 +10,7 @@ import {
 import { RecebedorService } from './recebedor.service';
 import { CreateRecebedorDto } from './dto/create-recebedor.dto';
 import { UpdateRecebedorDto } from './dto/update-recebedor.dto';
+import { PaginationFilterDto } from './dto/pagination-filter.dto';
 
 @Controller('recebedor')
 export class RecebedorController {
@@ -20,9 +21,9 @@ export class RecebedorController {
     return this.recebedorService.create(createRecebedorDto);
   }
 
-  @Get()
-  findAll() {
-    return this.recebedorService.findAll();
+  @Post('list')
+  findAll(@Body() paginationFilterDto: PaginationFilterDto) {
+    return this.recebedorService.findAll(paginationFilterDto);
   }
 
   @Get(':id')
