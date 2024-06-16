@@ -86,7 +86,11 @@ export class RecebedorService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} recebedor`;
+  async remove(id: string) {
+    const recebedor = await this.prisma.recebedor.findUnique({ where: { id } });
+    if (!recebedor)
+      throw new HttpException('Recebedor não encontrado', HttpStatus.NOT_FOUND);
+
+    return await this.prisma.recebedor.delete({ where: { id } });
   }
 }

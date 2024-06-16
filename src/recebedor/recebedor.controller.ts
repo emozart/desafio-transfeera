@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { RecebedorService } from './recebedor.service';
 import { CreateRecebedorDto } from './dto/create-recebedor.dto';
@@ -40,7 +41,9 @@ export class RecebedorController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.recebedorService.remove(+id);
+  @HttpCode(204)
+  async remove(@Param('id') id: string) {
+    await this.recebedorService.remove(id);
+    return;
   }
 }
