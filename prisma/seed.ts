@@ -58,14 +58,12 @@ async function seed() {
 
     for (const [index, uuid] of uuids.entries()) {
       let elemento;
-      // Gera dados aleatórios
       if (index % 4 === 0) {
         elemento = generateCompany(uuid);
       } else {
         elemento = generatePerson(uuid);
       }
 
-      // Cria o elemento JSON
       await prisma.recebedor.upsert({
         where: { id: elemento.id },
         update: {},
@@ -89,7 +87,7 @@ function generatePerson(id: string) {
     firstName: primeiroNome.toLowerCase(),
     lastName: ultimoNome.toLowerCase(),
   });
-  const cpfCnpj = generateCPF();
+  const cpfCnpj = faker.string.numeric(11);
   const tipoChave = faker.helpers.arrayElement(['CPF', 'EMAIL', 'TELEFONE']);
   const chave: string = {
     CPF: cpfCnpj,
@@ -117,7 +115,7 @@ function generateCompany(id: string) {
     lastName: '',
     provider: `${company.toLowerCase().replace(' ', '')}.com.br`,
   });
-  const cpfCnpj = generateCNPJ();
+  const cpfCnpj = faker.string.numeric(14);
   const tipoChave = faker.helpers.arrayElement([
     'CNPJ',
     'EMAIL',
@@ -143,14 +141,6 @@ function generateCompany(id: string) {
     chave,
     status,
   };
-}
-
-function generateCPF() {
-  return `${faker.string.numeric(3)}.${faker.string.numeric(3)}.${faker.string.numeric(3)}-${faker.string.numeric(2)}`;
-}
-
-function generateCNPJ() {
-  return `${faker.string.numeric(3)}.${faker.string.numeric(3)}.${faker.string.numeric(3)}/000${faker.string.numeric(1)}-${faker.string.numeric(2)}`;
 }
 
 function generatePhoneNumber() {
