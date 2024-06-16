@@ -8,9 +8,18 @@ import { PaginationFilterDto } from './dto/pagination-filter.dto';
 export class RecebedorService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(createRecebedorDto: CreateRecebedorDto) {
-    return 'This action adds a new recebedor';
+    const recebedor = this.prisma.recebedor.create({
+      data: {
+        nomeRasaoSocial: createRecebedorDto.nome,
+        email: createRecebedorDto.email,
+        cpfCnpj: createRecebedorDto.cpfCnpj,
+        tipoChave: createRecebedorDto.tipoChave,
+        chave: createRecebedorDto.chave,
+        status: 'Rascunho',
+      },
+    });
+    return recebedor;
   }
 
   async findAll(paginationFilterDto: PaginationFilterDto) {
