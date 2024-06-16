@@ -3,6 +3,7 @@ import { CreateRecebedorDto } from './dto/create-recebedor.dto';
 import { UpdateRecebedorDto } from './dto/update-recebedor.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { PaginationFilterDto } from './dto/pagination-filter.dto';
+import { extractNumbers } from './helpers/extractNumbers';
 
 @Injectable()
 export class RecebedorService {
@@ -13,9 +14,13 @@ export class RecebedorService {
       data: {
         nomeRasaoSocial: createRecebedorDto.nome,
         email: createRecebedorDto.email,
-        cpfCnpj: createRecebedorDto.cpfCnpj,
+        cpfCnpj: extractNumbers(createRecebedorDto.cpfCnpj),
         tipoChave: createRecebedorDto.tipoChave,
-        chave: createRecebedorDto.chave,
+        chave:
+          createRecebedorDto.tipoChave === 'CPF' ||
+          createRecebedorDto.tipoChave === 'CNPJ'
+            ? extractNumbers(createRecebedorDto.chave)
+            : createRecebedorDto.chave,
         status: 'Rascunho',
       },
     });
