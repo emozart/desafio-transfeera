@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRecebedorDto } from './dto/create-recebedor.dto';
 import { UpdateRecebedorDto } from './dto/update-recebedor.dto';
 import { PrismaService } from 'prisma/prisma.service';
@@ -51,13 +51,39 @@ export class RecebedorService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} recebedor`;
+  findOne(id: string) {
+    return this.prisma.recebedor.findUnique({ where: { id } });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: number, updateRecebedorDto: UpdateRecebedorDto) {
-    return `This action updates a #${id} recebedor`;
+  async update(id: string, updateRecebedorDto: UpdateRecebedorDto) {
+    const recebedor = await this.prisma.recebedor.findUnique({ where: { id } });
+    if (!recebedor)
+      throw new HttpException('Recebedor não encontrado', HttpStatus.NOT_FOUND);
+
+    switch (recebedor.status) {
+      case 'Rascunho':
+        return await this.prisma.recebedor.update({
+          where: {
+            id,
+          },
+          data: {
+            nomeRasaoSocial: updateRecebedorDto?.nome,
+            email: updateRecebedorDto?.email,
+            cpfCnpj: updateRecebedorDto?.cpfCnpj,
+            tipoChave: updateRecebedorDto?.tipoChave,
+            chave: updateRecebedorDto.chave,
+          },
+        });
+      case 'Validado':
+        return await this.prisma.recebedor.update({
+          where: {
+            id,
+          },
+          data: {
+            email: updateRecebedorDto?.email,
+          },
+        });
+    }
   }
 
   remove(id: number) {

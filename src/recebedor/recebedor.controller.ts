@@ -28,7 +28,7 @@ export class RecebedorController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.recebedorService.findOne(+id);
+    return this.recebedorService.findOne(id);
   }
 
   @Patch(':id')
@@ -36,7 +36,7 @@ export class RecebedorController {
     @Param('id') id: string,
     @Body() updateRecebedorDto: UpdateRecebedorDto,
   ) {
-    return this.recebedorService.update(+id, updateRecebedorDto);
+    return this.recebedorService.update(id, updateRecebedorDto);
   }
 
   @Delete(':id')
