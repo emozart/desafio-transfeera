@@ -33,11 +33,12 @@ export class RecebedorController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateRecebedorDto: UpdateRecebedorDto,
   ) {
-    return this.recebedorService.update(id, updateRecebedorDto);
+    await this.recebedorService.update(id, updateRecebedorDto);
+    return;
   }
 
   @Delete(':id')

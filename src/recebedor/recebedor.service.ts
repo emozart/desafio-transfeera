@@ -75,6 +75,17 @@ export class RecebedorService {
           },
         });
       case 'Validado':
+        if (
+          !!updateRecebedorDto.nome ||
+          !!updateRecebedorDto.cpfCnpj ||
+          !!updateRecebedorDto.tipoChave ||
+          !!updateRecebedorDto.chave
+        ) {
+          throw new HttpException(
+            'Recebedores validados só podem alterar o email',
+            HttpStatus.FORBIDDEN,
+          );
+        }
         return await this.prisma.recebedor.update({
           where: {
             id,
