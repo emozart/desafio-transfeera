@@ -43,6 +43,7 @@ const mockPrismaService = {
       }),
     delete: jest.fn(),
     findMany: jest.fn(),
+    deleteMany: jest.fn(),
   },
 };
 
@@ -405,39 +406,43 @@ describe('RecebedorService', () => {
 
   describe('remove', () => {
     it('Deve remover o recebedor com o id fornecido', async () => {
-      const id = '1';
-      const mockRecebedor = {
-        id,
-        nomeRasaoSocial: 'João da Silva',
-        email: 'joao.silva@teste.com',
-        cpfCnpj: '042.631.612-63',
-        tipoChave: 'TELEFONE',
-        chave: '+55 (93) 91922-6949',
-        status: 'Rascunho',
-      };
+      const id = '123';
 
-      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(
-        mockRecebedor,
-      );
-
-      await service.remove(id);
-
-      expect(mockPrismaService.recebedor.delete).toHaveBeenCalledWith({
-        where: { id },
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce({
+        id: '123',
       });
+
+      const result = await service.remove([id]);
+
+      expect(result).toEqual({ message: 'Recebedores excluídos com sucesso' });
+    });
+
+    it('Deve remover vários recebedores pelo id', async () => {
+      const ids = ['123', '456', '789'];
+
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce({
+        id: '123',
+      });
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce({
+        id: '456',
+      });
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce({
+        id: '789',
+      });
+
+      const result = await service.remove(ids);
+
+      expect(result).toEqual({ message: 'Recebedores excluídos com sucesso' });
     });
 
     it('Deve lançar um erro se o recebedor não for encontrado', async () => {
       const id = 'id não encontrado';
-
-      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(null);
-
-      await expect(service.findOne(id)).rejects.toThrow(
-        new HttpException('Recebedor não encontrado', HttpStatus.NOT_FOUND),
+      await expect(service.remove([id])).rejects.toThrow(
+        new HttpException(
+          `Recebedor com ID ${id} não encontrado`,
+          HttpStatus.NOT_FOUND,
+        ),
       );
-      expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
-        where: { id },
-      });
     });
   });
 });

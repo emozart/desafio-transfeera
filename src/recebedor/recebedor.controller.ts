@@ -41,10 +41,10 @@ export class RecebedorController {
     return;
   }
 
-  @Delete(':id')
+  @Delete()
   @HttpCode(204)
-  async remove(@Param('id') id: string) {
-    await this.recebedorService.remove(id);
+  async remove(@Body('ids') ids: string[]) {
+    await this.recebedorService.remove(ids);
     return;
   }
 }

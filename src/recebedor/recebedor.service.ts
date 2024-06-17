@@ -107,11 +107,20 @@ export class RecebedorService {
     }
   }
 
-  async remove(id: string) {
-    const recebedor = await this.prisma.recebedor.findUnique({ where: { id } });
-    if (!recebedor)
-      throw new HttpException('Recebedor não encontrado', HttpStatus.NOT_FOUND);
+  async remove(ids: string[]) {
+    for (const id of ids) {
+      const recebedor = await this.prisma.recebedor.findUnique({
+        where: { id },
+      });
+      if (!recebedor) {
+        throw new HttpException(
+          `Recebedor com ID ${id} não encontrado`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
 
-    return await this.prisma.recebedor.delete({ where: { id } });
+    await this.prisma.recebedor.deleteMany({ where: { id: { in: ids } } });
+    return { message: 'Recebedores excluídos com sucesso' };
   }
 }
