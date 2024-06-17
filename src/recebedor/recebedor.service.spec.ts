@@ -4,6 +4,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateRecebedorDto } from './dto/create-recebedor.dto';
 import { PaginationFilterDto } from './dto/pagination-filter.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { UpdateRecebedorDto } from './dto/update-recebedor.dto';
 
 const mockPrismaService = {
   recebedor: {
@@ -272,6 +273,129 @@ describe('RecebedorService', () => {
 
       await expect(service.findOne(id)).rejects.toThrow(
         new HttpException('Recebedor não encontrado', HttpStatus.NOT_FOUND),
+      );
+      expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
+        where: { id },
+      });
+    });
+  });
+
+  describe('Update', () => {
+    it('Deve lançar um erro se o recebedor não for encontrado', async () => {
+      const id = 'id não encontrado';
+      const updateDto: UpdateRecebedorDto = {
+        nome: 'João da Silva',
+        email: 'joao.silva@teste.com',
+        cpfCnpj: '12345678900',
+        tipoChave: 'CPF',
+        chave: '12345678900',
+      };
+
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(null);
+
+      await expect(service.update(id, updateDto)).rejects.toThrow(
+        new HttpException('Recebedor não encontrado', HttpStatus.NOT_FOUND),
+      );
+      expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
+        where: { id },
+      });
+    });
+
+    it('Deve atualizar um recebedor com status Rascunho', async () => {
+      const id = '1';
+      const updateDto: UpdateRecebedorDto = {
+        nome: 'João da Silva',
+        email: 'joao.silva@teste.com',
+        cpfCnpj: '12345678900',
+        tipoChave: 'CPF',
+        chave: '12345678900',
+      };
+
+      const mockRecebedor = {
+        id,
+        nomeRasaoSocial: updateDto.nome,
+        email: updateDto.email,
+        cpfCnpj: updateDto.cpfCnpj,
+        tipoChave: updateDto.tipoChave,
+        chave: updateDto.chave,
+        status: 'Rascunho',
+      };
+
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(
+        mockRecebedor,
+      );
+
+      const updatedRecebedor = await service.update(id, updateDto);
+
+      expect(updatedRecebedor).toEqual(mockRecebedor);
+      expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
+        where: { id },
+      });
+      expect(mockPrismaService.recebedor.update).toHaveBeenCalledWith({
+        where: { id },
+        data: {
+          nomeRasaoSocial: updateDto.nome,
+          email: updateDto.email,
+          cpfCnpj: updateDto.cpfCnpj,
+          tipoChave: updateDto.tipoChave,
+          chave: updateDto.chave,
+        },
+      });
+    });
+
+    it('Deve atualizar somente email se o status for Validado', async () => {
+      const id = '2';
+      const updateDto: UpdateRecebedorDto = {
+        email: 'maria.souza2@teste.com',
+      };
+
+      const mockRecebedor = {
+        id,
+        nomeRasaoSocial: 'Maria de Souza',
+        email: updateDto.email,
+        cpfCnpj: '98765432100',
+        tipoChave: 'CPF',
+        chave: '98765432100',
+        status: 'Validado',
+      };
+
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(
+        mockRecebedor,
+      );
+
+      const updatedRecebedor = await service.update(id, updateDto);
+
+      expect(updatedRecebedor).toEqual(mockRecebedor);
+      expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
+        where: { id },
+      });
+      expect(mockPrismaService.recebedor.update).toHaveBeenCalledWith({
+        where: { id },
+        data: {
+          email: updateDto.email,
+        },
+      });
+    });
+
+    it('Deve lançar um erro ao tentar atualizar outros campos com status validado', async () => {
+      const id = '1';
+      const updateDto: UpdateRecebedorDto = {
+        nome: 'Jane Doe',
+        cpfCnpj: '98765432100',
+        tipoChave: 'CPF',
+        chave: '98765432100',
+      };
+
+      const mockRecebedor = { id: '1', status: 'Validado' };
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(
+        mockRecebedor,
+      );
+
+      await expect(service.update(id, updateDto)).rejects.toThrowError(
+        new HttpException(
+          'Recebedores validados só podem alterar o email',
+          HttpStatus.FORBIDDEN,
+        ),
       );
       expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
         where: { id },
