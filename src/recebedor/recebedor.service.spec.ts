@@ -3,6 +3,7 @@ import { RecebedorService } from './recebedor.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateRecebedorDto } from './dto/create-recebedor.dto';
 import { PaginationFilterDto } from './dto/pagination-filter.dto';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 const mockPrismaService = {
   recebedor: {
@@ -236,6 +237,45 @@ describe('RecebedorService', () => {
         (paginationFilterDto.pagina - 1) * paginationFilterDto.itens,
       );
       expect(firstCall.take).toBe(paginationFilterDto.itens);
+    });
+  });
+
+  describe('findOne', () => {
+    it('Deve encontrar o recebedor pelo id', async () => {
+      const id = '1';
+      const mockRecebedor = {
+        id,
+        nomeRasaoSocial: 'João da Silva',
+        email: 'joao.silva@teste.com',
+        cpfCnpj: '042.631.612-63',
+        tipoChave: 'TELEFONE',
+        chave: '+55 (93) 91922-6949',
+        status: 'Rascunho',
+      };
+
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(
+        mockRecebedor,
+      );
+
+      const foundRecebedor = await service.findOne(id);
+
+      expect(foundRecebedor).toEqual(mockRecebedor);
+      expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
+        where: { id },
+      });
+    });
+
+    it('Deve lançar um erro se o recebedor não for encontrado', async () => {
+      const id = 'id não encontrado';
+
+      mockPrismaService.recebedor.findUnique.mockResolvedValueOnce(null);
+
+      await expect(service.findOne(id)).rejects.toThrow(
+        new HttpException('Recebedor não encontrado', HttpStatus.NOT_FOUND),
+      );
+      expect(mockPrismaService.recebedor.findUnique).toHaveBeenCalledWith({
+        where: { id },
+      });
     });
   });
 });
