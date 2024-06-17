@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RecebedorService } from './recebedor.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateRecebedorDto } from './dto/create-recebedor.dto';
+import { PaginationFilterDto } from './dto/pagination-filter.dto';
 
 const mockPrismaService = {
   recebedor: {
@@ -95,6 +96,146 @@ describe('RecebedorService', () => {
           status: 'Rascunho',
         },
       });
+    });
+  });
+
+  describe('findAll', () => {
+    it('deve retornar uma lista de recebedores paginada', async () => {
+      const paginationFilterDto: PaginationFilterDto = {
+        nome: '',
+        status: '',
+        tipoChave: '',
+        chave: '',
+        pagina: 1,
+        itens: 3,
+      };
+
+      const mockRecebedores = [
+        {
+          id: '1',
+          nomeRasaoSocial: 'Cydney Olson',
+          email: 'cydney.olson24@hotmail.com',
+          cpfCnpj: '042.631.612-63',
+          tipoChave: 'TELEFONE',
+          chave: '+55 (93) 91922-6949',
+          status: 'Rascunho',
+        },
+        {
+          id: '2',
+          nomeRasaoSocial: 'Dock Harris',
+          email: 'dock_harris36@yahoo.com',
+          cpfCnpj: '721.922.298-07',
+          tipoChave: 'CPF',
+          chave: '721.922.298-07',
+          status: 'Rascunho',
+        },
+        {
+          id: '3',
+          nomeRasaoSocial: 'Eldridge Nicolas',
+          email: 'eldridge_nicolas28@hotmail.com',
+          cpfCnpj: '840.045.111-06',
+          tipoChave: 'TELEFONE',
+          chave: '+55 (21) 91664-6443',
+          status: 'Validado',
+        },
+        {
+          id: '4',
+          nomeRasaoSocial: 'Shanna Hane',
+          email: 'shanna_hane18@hotmail.com',
+          cpfCnpj: '735.417.028-50',
+          tipoChave: 'EMAIL',
+          chave: 'shanna_hane18@hotmail.com',
+          status: 'Rascunho',
+        },
+        {
+          id: '5',
+          nomeRasaoSocial: 'Kirstin Harvey',
+          email: 'kirstin_harvey76@hotmail.com',
+          cpfCnpj: '828.860.572-69',
+          tipoChave: 'CPF',
+          chave: '828.860.572-69',
+          status: 'Rascunho',
+        },
+        {
+          id: '6',
+          nomeRasaoSocial: 'Interfaces Ltda.',
+          email: 'contato_21@interfaces.com.br',
+          cpfCnpj: '826.640.547/0009-83',
+          tipoChave: 'CNPJ',
+          chave: '826.640.547/0009-83',
+          status: 'Validado',
+        },
+        {
+          id: '7',
+          nomeRasaoSocial: 'Metrics Ltda.',
+          email: 'contato_@metrics.com.br',
+          cpfCnpj: '354.846.975/0008-41',
+          tipoChave: 'CHAVE_ALEATORIA',
+          chave: 'DGpahSbD-DFiF-Jxha-QIMo-dIGqAd8fVQnv',
+          status: 'Rascunho',
+        },
+        {
+          id: '8',
+          nomeRasaoSocial: 'Antoinette Jacobson',
+          email: 'antoinette_jacobson@gmail.com',
+          cpfCnpj: '218.442.977-46',
+          tipoChave: 'TELEFONE',
+          chave: '+55 (18) 96330-9206',
+          status: 'Rascunho',
+        },
+        {
+          id: '9',
+          nomeRasaoSocial: 'Initiatives S.A.',
+          email: 'contato_@initiatives.com.br',
+          cpfCnpj: '752.906.907/0007-58',
+          tipoChave: 'CHAVE_ALEATORIA',
+          chave: 'Nquhex6P-FbIX-SFjJ-qGzN-ev76xuoIdGaL',
+          status: 'Validado',
+        },
+        {
+          id: '10',
+          nomeRasaoSocial: 'Katelynn Ryan',
+          email: 'katelynn_ryan@hotmail.com',
+          cpfCnpj: '178.080.733-25',
+          tipoChave: 'EMAIL',
+          chave: 'katelynn_ryan@hotmail.com',
+          status: 'Rascunho',
+        },
+      ];
+
+      const mockRecebedoresPrimeiraChamada = [
+        mockRecebedores[0],
+        mockRecebedores[1],
+        mockRecebedores[2],
+      ];
+
+      // Primeira chamada busca os recebedores da página selecionada
+      mockPrismaService.recebedor.findMany.mockResolvedValueOnce(
+        mockRecebedoresPrimeiraChamada,
+      );
+      // Segunda chamada busca total de recebedores encontrados
+      mockPrismaService.recebedor.findMany.mockResolvedValueOnce(
+        mockRecebedores,
+      );
+
+      const result = await service.findAll(paginationFilterDto);
+
+      expect(result.total).toBe(mockRecebedores.length);
+      expect(result.pagina).toBe(paginationFilterDto.pagina);
+      expect(result.recebedores).toEqual(mockRecebedoresPrimeiraChamada);
+
+      expect(mockPrismaService.recebedor.findMany).toHaveBeenCalledTimes(2);
+      const firstCall = mockPrismaService.recebedor.findMany.mock.calls[0][0];
+      expect(firstCall.where).toEqual({
+        nomeRasaoSocial: paginationFilterDto.nome,
+        status: paginationFilterDto.status,
+        tipoChave: paginationFilterDto.tipoChave,
+        chave: paginationFilterDto.chave,
+      });
+      expect(firstCall.skip).toBe(
+        (paginationFilterDto.pagina - 1) * paginationFilterDto.itens,
+      );
+      expect(firstCall.take).toBe(paginationFilterDto.itens);
     });
   });
 });
