@@ -64,6 +64,8 @@ async function seed() {
         elemento = generatePerson(uuid);
       }
 
+      elemento.status = index % 5 === 0 ? 'Validado' : 'Rascunho';
+
       await prisma.recebedor.upsert({
         where: { id: elemento.id },
         update: {},
@@ -94,7 +96,7 @@ function generatePerson(id: string) {
     EMAIL: email,
     TELEFONE: generatePhoneNumber(),
   }[tipoChave];
-  const status = faker.helpers.arrayElement(['Validado', 'Rascunho']);
+  const status = '';
 
   return {
     id,
@@ -130,7 +132,7 @@ function generateCompany(id: string) {
     }),
     CHAVE_ALEATORIA: generateRandomKey(),
   }[tipoChave];
-  const status = faker.helpers.arrayElement(['Validado', 'Rascunho']);
+  const status = '';
 
   return {
     id,
