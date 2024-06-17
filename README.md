@@ -1,73 +1,59 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+## Descrição
+Esse projeto é parte do processo seletivo para empresa Transfeera.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
+## Instalação
+Após clonar o repositório basta executar o comando 'npm install' na mesma pasta 
+do projeto.
 ```bash
 $ npm install
 ```
+O projeto utiliza um banco de dados postgres e disponibiliza um arquivo 
+docker-compose.yml com a configuração para um container docker com uma imagem
+do postgres configurada para a aplicação.
 
-## Running the app
-
+Você deverá ter o docker instalado no seu computador para executar os comandos
+abaixo na pasta do projeto.
 ```bash
-# development
-$ npm run start
+$ docker compose up -d
+```
 
-# watch mode
+Para verificar se o container está rodando execute o comando abaixo.
+```bash
+$ docker ps
+```
+
+Será apresentada uma lista com os containers que estiverem ativos.
+```bash
+CONTAINER ID   IMAGE      COMMAND                  CREATED      STATUS      PORTS                                       NAMES
+dd6e495681e5   postgres   "docker-entrypoint.s…"   4 days ago   Up 2 days   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   postgres
+```
+
+## Rodando a aplicação
+Execute o comando abaixo para rodar a aplicação.
+```bash
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
-
+## Testes
+Execute o comando abaixo para executar os testes unitários da aplicação.
 ```bash
-# unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
 
-## Support
+Execute o comando abaixo para executar os testes e2e da aplicação.
+```bash
+$ npm run test:e2e
+```
+Caso queira rodar os testes e2e mais de uma vez execute o comando de reset do
+prima para limpar o bando e rodar o script de seed.
+```bash
+$ npx prisma migrate reset
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Contato
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Autor: Elton Mozart [LinkedIn profile](https://www.linkedin.com/in/eltonmozart/)
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Este projeto está sobre a [MIT licensed](LICENSE).
