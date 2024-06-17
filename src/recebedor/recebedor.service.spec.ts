@@ -391,7 +391,7 @@ describe('RecebedorService', () => {
         mockRecebedor,
       );
 
-      await expect(service.update(id, updateDto)).rejects.toThrowError(
+      await expect(service.update(id, updateDto)).rejects.toThrow(
         new HttpException(
           'Recebedores validados só podem alterar o email',
           HttpStatus.FORBIDDEN,

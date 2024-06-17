@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RecebedorService } from './recebedor.service';
 import { RecebedorController } from './recebedor.controller';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Module({
   controllers: [RecebedorController],
