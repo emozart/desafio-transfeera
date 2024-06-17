@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RecebedorService } from './recebedor.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { CreateRecebedorDto } from './dto/create-recebedor.dto';
 
 const mockPrismaService = {
   recebedor: {
@@ -64,5 +65,36 @@ describe('RecebedorService', () => {
   it('Devem ser definidos', () => {
     expect(service).toBeDefined();
     expect(prisma).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should create a new recebedor', async () => {
+      const createDto: CreateRecebedorDto = {
+        nome: 'João da Silva',
+        email: 'joao.silva@teste.com',
+        cpfCnpj: '12345678900',
+        tipoChave: 'CPF',
+        chave: '12345678900',
+      };
+
+      mockPrismaService.recebedor.create.mockResolvedValueOnce({
+        id: '1',
+        ...createDto,
+      });
+
+      const createdRecebedor = await service.create(createDto);
+
+      expect(createdRecebedor).toEqual({ id: '1', ...createDto });
+      expect(mockPrismaService.recebedor.create).toHaveBeenCalledWith({
+        data: {
+          nomeRasaoSocial: createDto.nome,
+          email: createDto.email,
+          cpfCnpj: '12345678900',
+          tipoChave: createDto.tipoChave,
+          chave: '12345678900',
+          status: 'Rascunho',
+        },
+      });
+    });
   });
 });
