@@ -108,10 +108,15 @@ describe('Recebedores (e2e)', () => {
   });
 
   it('/recebedor (DELETE)', async () => {
-    const id = '07c08e08-58e6-4234-b35b-e53097311842';
-    const response = await request(app.getHttpServer()).delete(
-      `/recebedor/${id}`,
-    );
+    const response = await request(app.getHttpServer())
+      .delete('/recebedor')
+      .send({
+        ids: [
+          '1974523d-4783-452b-a42d-7b465977a380',
+          '77818b4a-4942-4258-b977-264123225247',
+          '14137392-5482-421c-8678-198821780188',
+        ],
+      });
 
     expect(response.statusCode).toBe(204);
   });
