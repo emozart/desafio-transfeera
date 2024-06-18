@@ -28,6 +28,12 @@ CONTAINER ID   IMAGE      COMMAND                  CREATED      STATUS      PORT
 dd6e495681e5   postgres   "docker-entrypoint.s…"   4 days ago   Up 2 days   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   postgres
 ```
 
+## Configurando variáveis de ambiente
+Modifique o arquivo .env.exemple para .env e preencha a variável DATABASE_URL. 
+Para a imagem docker do postgres usada o usuário e senha são o mesmo: postgres.
+A url deve ficar assim:
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/transfeera?schema=public"
+
 ## Rodando a aplicação
 Execute o comando abaixo para rodar a aplicação.
 ```bash
